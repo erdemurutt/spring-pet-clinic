@@ -5,10 +5,12 @@ import com.erdemurut.springframework.sfgpetclinic.model.Pet;
 import com.erdemurut.springframework.sfgpetclinic.model.PetType;
 import com.erdemurut.springframework.sfgpetclinic.model.Speciality;
 import com.erdemurut.springframework.sfgpetclinic.model.Vet;
+import com.erdemurut.springframework.sfgpetclinic.model.Visit;
 import com.erdemurut.springframework.sfgpetclinic.services.OwnerService;
 import com.erdemurut.springframework.sfgpetclinic.services.PetTypeService;
 import com.erdemurut.springframework.sfgpetclinic.services.SpecialtyService;
 import com.erdemurut.springframework.sfgpetclinic.services.VetService;
+import com.erdemurut.springframework.sfgpetclinic.services.VisitService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +23,15 @@ public class DataLoader implements CommandLineRunner {
 	private final VetService vetService;
 	private final PetTypeService petTypeService;
 	private final SpecialtyService specialtyService;
+	private final VisitService visitService;
 
-	public DataLoader(OwnerService ownerService, VetService vetService,
-					  PetTypeService petTypeService, SpecialtyService specialtyService) {
+	public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService,
+					  SpecialtyService specialtyService, VisitService visitService) {
 		this.ownerService = ownerService;
 		this.vetService = vetService;
 		this.petTypeService = petTypeService;
 		this.specialtyService = specialtyService;
+		this.visitService = visitService;
 	}
 
 	@Override
@@ -89,6 +93,12 @@ public class DataLoader implements CommandLineRunner {
 		betulsCat.setName("Pikachu");
 		owner2.getPets().add(betulsCat);
 		ownerService.save(owner2);
+
+		Visit catVisit = new Visit();
+		catVisit.setPet(betulsCat);
+		catVisit.setDate(LocalDate.now());
+		catVisit.setDescription("Sneezy Kitty");
+		visitService.save(catVisit);
 
 		System.out.println("Loaded Owners");
 
