@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ class OwnerControllerTest {
 
 	@Test
 	void processFindFormReturnMany() throws Exception {
-		when(ownerService.findAllByLastNameLike(anyString()))
+		when(ownerService.findByLastNameContainingIgnoreCase(anyString()))
 				.thenReturn(Arrays.asList(Owner.builder().id(1L).build(),
 						Owner.builder().id(2L).build()));
 
@@ -75,8 +76,8 @@ class OwnerControllerTest {
 
 	@Test
 	void processFindFormReturnOne() throws Exception {
-		when(ownerService.findAllByLastNameLike(anyString()))
-				.thenReturn(Arrays.asList(Owner.builder().id(1L).build()));
+		when(ownerService.findByLastNameContainingIgnoreCase(anyString()))
+				.thenReturn(Collections.singletonList(Owner.builder().id(1L).build()));
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/owners"))
 				.andExpect(status().is3xxRedirection())
@@ -86,9 +87,21 @@ class OwnerControllerTest {
 	@Test
 	void displayOwner() throws Exception {
 		when(ownerService.findById(anyLong())).thenReturn(Owner.builder().id(1L).build());
+
 		mockMvc.perform(MockMvcRequestBuilders.get("/owners/123"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("owners/ownerDetails"))
 				.andExpect(model().attribute("owner", hasProperty("id", Matchers.is(1L))));
+	}
+
+	@Test
+	void processFindFormEmptyReturnMany() throws Exception {
+		when(ownerService.findByLastNameContainingIgnoreCase(anyString()))
+				.thenReturn(Arrays.asList(Owner.builder().id(1l).build(), Owner.builder().id(2l).build()));
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/owners").param("lastName",""))
+				.andExpect(status().isOk())
+				.andExpect(view().name("owners/ownersList"))
+				.andExpect(model().attribute("selections", hasSize(2)));;
 	}
 }

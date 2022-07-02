@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Locale;
 
 @RequestMapping("/owners")
 @Controller
@@ -41,11 +42,10 @@ public class OwnerController {
 			owner.setLastName("");
 		}
 
-		List<Owner> results = ownerService.findAllByLastNameLike("%" + owner.getLastName() + "%");
-
+		List<Owner> results = ownerService.findByLastNameContainingIgnoreCase(owner.getLastName().toLowerCase(Locale.ROOT));
 		if (results.isEmpty()) {
-			bindingResult.rejectValue("lastName", "notFound", "Not Found");
-			return "owners/findOwners";
+			//bindingResult.rejectValue("lastName", "notFound", "Not Found");
+			return "redirect:/owners";
 		} else if (results.size() == 1) {
 			owner = results.get(0);
 			return "redirect:/owners/" + owner.getId();
