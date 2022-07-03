@@ -48,7 +48,7 @@ public class OwnerController {
 
 		List<Owner> results = ownerService.findByLastNameContainingIgnoreCase(owner.getLastName().toLowerCase(Locale.ROOT));
 		if (results.isEmpty()) {
-			//bindingResult.rejectValue("lastName", "notFound", "Not Found");
+			bindingResult.rejectValue("lastName", "notFound", "Not Found");
 			return "redirect:/owners";
 		} else if (results.size() == 1) {
 			owner = results.get(0);
